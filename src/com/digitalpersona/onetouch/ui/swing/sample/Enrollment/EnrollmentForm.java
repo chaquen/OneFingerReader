@@ -22,13 +22,14 @@ public class EnrollmentForm extends CaptureForm
 	private DPFPEnrollment enroller = DPFPGlobal.getEnrollmentFactory().createEnrollment();
 	private DPFPTemplate template;
 	EnrollmentForm(Frame owner) {
+        
 		super(owner);
 	}
 	
 	@Override protected void init()
 	{
 		super.init();
-		this.setTitle("Fingerprint Enrollment");
+		this.setTitle("Registrar tu huella");
 		updateStatus();
 	}
 
@@ -40,7 +41,8 @@ public class EnrollmentForm extends CaptureForm
 		// Check quality of the sample and add to enroller if it's good
 		if (features != null) try
 		{
-			makeReport("The fingerprint feature set was created.");
+			//makeReport("The fingerprint feature set was created.");
+                        makeReport("Las caracteristicas de la huella han sido creadas");
 			enroller.addFeatures(features);		// Add feature set to template.
 		}
 		catch (DPFPImageQualityException ex) { }
@@ -64,7 +66,7 @@ public class EnrollmentForm extends CaptureForm
 					stop();
 					updateStatus();
 					((MainForm)getOwner()).setTemplate(null);
-					JOptionPane.showMessageDialog(EnrollmentForm.this, "The fingerprint template is not valid. Repeat fingerprint enrollment.", "Fingerprint Enrollment", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(EnrollmentForm.this, "La muestra de la huella no esvalida,Intente de nuevo el registro de la huella", "Registro de huella", JOptionPane.ERROR_MESSAGE);
 					start();
 					break;
 			}
@@ -74,7 +76,7 @@ public class EnrollmentForm extends CaptureForm
 	private void updateStatus()
 	{
 		// Show number of samples needed.
-		setStatus(String.format("Fingerprint samples needed: %1$s", enroller.getFeaturesNeeded()));
+		setStatus(String.format("Numero de capturas necesarias para registro de huella %1$s", enroller.getFeaturesNeeded()));
 	}
     ConexionBD con=new ConexionBD();
  /*

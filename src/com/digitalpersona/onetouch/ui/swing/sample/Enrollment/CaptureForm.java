@@ -21,7 +21,7 @@ public class CaptureForm
 	
     public CaptureForm(Frame owner) {
         super (owner, true);
-        setTitle("Fingerprint Enrollment");
+        setTitle("Registrar huella");
 
 		setLayout(new BorderLayout());
 		rootPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -94,8 +94,8 @@ public class CaptureForm
 		capturer.addDataListener(new DPFPDataAdapter() {
 			@Override public void dataAcquired(final DPFPDataEvent e) {
 				SwingUtilities.invokeLater(new Runnable() {	public void run() {
-					makeReport("The fingerprint sample was captured.");
-					setPrompt("Scan the same fingerprint again.");
+					makeReport("La huella se ha capturado ");
+					setPrompt("Registre la huella de nuevo");
 					process(e.getSample());
 				}});
 			}
@@ -103,24 +103,24 @@ public class CaptureForm
 		capturer.addReaderStatusListener(new DPFPReaderStatusAdapter() {
 			@Override public void readerConnected(final DPFPReaderStatusEvent e) {
 				SwingUtilities.invokeLater(new Runnable() {	public void run() {
-		 			makeReport("The fingerprint reader was connected.");
+		 			makeReport("El lector ha sido conectado");
 				}});
 			}
 			@Override public void readerDisconnected(final DPFPReaderStatusEvent e) {
 				SwingUtilities.invokeLater(new Runnable() {	public void run() {
-					makeReport("The fingerprint reader was disconnected.");
+					makeReport("El lector a sido desconectado");
 				}});
 			}
 		});
 		capturer.addSensorListener(new DPFPSensorAdapter() {
 			@Override public void fingerTouched(final DPFPSensorEvent e) {
 				SwingUtilities.invokeLater(new Runnable() {	public void run() {
-					makeReport("The fingerprint reader was touched.");
+					//makeReport("The fingerprint reader was touched.");
 				}});
 			}
 			@Override public void fingerGone(final DPFPSensorEvent e) {
 				SwingUtilities.invokeLater(new Runnable() {	public void run() {
-					makeReport("The finger was removed from the fingerprint reader.");
+					//makeReport("The finger was removed from the fingerprint reader.");
 				}});
 			}
 		});
@@ -128,9 +128,9 @@ public class CaptureForm
 			@Override public void onImageQuality(final DPFPImageQualityEvent e) {
 				SwingUtilities.invokeLater(new Runnable() {	public void run() {
 					if (e.getFeedback().equals(DPFPCaptureFeedback.CAPTURE_FEEDBACK_GOOD))
-						makeReport("The quality of the fingerprint sample is good.");
+						makeReport("La calidad de la huella es optima");
 					else
-						makeReport("The quality of the fingerprint sample is poor.");
+						makeReport("La calidad de la huella es pobre");
 				}});
 			}
 		});
@@ -145,7 +145,8 @@ public class CaptureForm
 	protected void start()
 	{
 		capturer.startCapture();
-		setPrompt("Using the fingerprint reader, scan your fingerprint.");
+		//setPrompt("Using the fingerprint reader, scan your fingerprint.");
+                setPrompt("Lector esta listo para usar");
 	}
 
 	protected void stop()
