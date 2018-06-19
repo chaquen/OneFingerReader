@@ -13,10 +13,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import java.util.Calendar;
 
 public class VerificationForm extends CaptureForm 
 {
@@ -48,28 +50,7 @@ public class VerificationForm extends CaptureForm
 		updateStatus(0);
 	}
 
-	/*@Override protected void process(DPFPSample sample) {
-		super.process(sample);
-
-		// Process the sample and create a feature set for the enrollment purpose.
-		DPFPFeatureSet features = extractFeatures(sample, DPFPDataPurpose.DATA_PURPOSE_VERIFICATION);
-
-		// Check quality of the sample and start verification if it's good
-		if (features != null)
-		{
-			// Compare the feature set with our template
-			//DPFPVerificationResult result = 
-			//	verificator.verify(features, ((MainForm)getOwner()).getTemplate());
-                        verificarHuella(features,((MainForm)getOwner()).getTemplate());
-                        DPFPVerificationResult result = verificator.verify(features, ((MainForm)getOwner()).getTemplate());
-                    
-			updateStatus(result.getFalseAcceptRate());
-			if (result.isVerified())
-				makeReport("The fingerprint was VERIFIED.");
-			else
-				makeReport("The fingerprint was NOT VERIFIED.");
-		}
-	}*/
+	
         @Override protected void process(DPFPSample sample) {
             try {
                 super.process(sample);
@@ -79,8 +60,7 @@ public class VerificationForm extends CaptureForm
 
                 Connection c=con.conectar();
                 //Obtiene la plantilla correspondiente a la persona indicada
-                PreparedStatement verificarStmt = c.prepareStatement("SELECT huella_binaria,pri_nombre,id FROM participantes");
-               
+                PreparedStatement verificarStmt = c.prepareStatement("SELECT id,CONCAT(pri_nombre,' ',pri_apellido) as nombre,updated_at,huella_binaria FROM participantes");     
                 ResultSet rs = verificarStmt.executeQuery();
                 
                     int i=0;
@@ -89,8 +69,20 @@ public class VerificationForm extends CaptureForm
                     while(rs.next()){
                        byte templateBuffer[] = rs.getBytes("huella_binaria");
                        
-                       String strNombre=rs.getString("pri_nombre");
+                       String nombre=rs.getString("nombre");
                        id=rs.getInt("id");
+                       Date fecha=rs.getDate("updated_at");//fecha de registro actualizacion de la huella
+                       //Date hoy=
+                       //Date fecha2=sumarRestarDiasFecha(fecha,730);//dos años despues 
+                       String msnAdi="";
+                       //if(hoy.after(fecha)){
+                         //  msnAdi=", Ya han pasado mas de dos años desde tu ultima vez, por favor actualiza tus datos";
+                       //}
+                       
+                       
+                       
+       
+       
                        DPFPTemplate referenceTemplate = DPFPGlobal.getTemplateFactory().createTemplate(templateBuffer);
                         //Envia la plantilla creada al objeto contendor de Template del componente de huella digital
                         setTemplate(referenceTemplate);
@@ -105,7 +97,7 @@ public class VerificationForm extends CaptureForm
                         if (result.isVerified()){
                         //crea la imagen de los datos guardado de las huellas guardadas en la base de datos
                             actualizarHuella(id);
-                            JOptionPane.showMessageDialog(null, "Bienvenido "+strNombre,"Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Bienvenido "+nombre,"Verificacion de Huella"+msnAdi, JOptionPane.INFORMATION_MESSAGE);
                             return;
                         }else{
                             
@@ -129,45 +121,7 @@ public class VerificationForm extends CaptureForm
 		setStatus(String.format("(FAR) = %1$s", FAR));
 	}
     ConexionBD con=new ConexionBD(); 
-   /* public void verificarHuella(String nom) {
-        try {
-        //Establece los valores para la sentencia SQL
-        Connection c=con.conectar();
-        //Obtiene la plantilla correspondiente a la persona indicada
-        PreparedStatement verificarStmt = c.prepareStatement("SELECT huehuella FROM somhue WHERE huenombre=?");
-        verificarStmt.setString(1,nom);
-        ResultSet rs = verificarStmt.executeQuery();
-
-        //Si se encuentra el nombre en la base de datos
-        if (rs.next()){
-        //Lee la plantilla de la base de datos
-        byte templateBuffer[] = rs.getBytes("huehuella");
-        //Crea una nueva plantilla a partir de la guardada en la base de datos
-        DPFPTemplate referenceTemplate = DPFPGlobal.getTemplateFactory().createTemplate(templateBuffer);
-        //Envia la plantilla creada al objeto contendor de Template del componente de huella digital
-        setTemplate(referenceTemplate);
-
-        // Compara las caracteriticas de la huella recientemente capturda con la
-        // plantilla guardada al usuario especifico en la base de datos
-        DPFPVerificationResult result = Verificador.verify(featuresverificacion, getTemplate());
-
-        //compara las plantilas (actual vs bd)
-        if (result.isVerified())
-        JOptionPane.showMessageDialog(null, "Las huella capturada coinciden con la de "+nom,"Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
-        else
-        JOptionPane.showMessageDialog(null, "No corresponde la huella con "+nom, "Verificacion de Huella", JOptionPane.ERROR_MESSAGE);
-
-        //Si no encuentra alguna huella correspondiente al nombre lo indica con un mensaje
-        } else {
-        JOptionPane.showMessageDialog(null, "No existe un registro de huella para "+nom, "Verificacion de Huella", JOptionPane.ERROR_MESSAGE);
-        }
-        } catch (SQLException e) {
-        //Si ocurre un error lo indica en la consola
-        System.err.println("Error al verificar los datos de la huella.");
-        }finally{
-           con.desconectar();
-        }
-   }*/
+ 
     public void verificarHuella(DPFPFeatureSet features,DPFPTemplate template){
         
         
@@ -184,14 +138,17 @@ public class VerificationForm extends CaptureForm
        Connection c=con.conectar();
 
        //Obtiene todas las huellas de la bd
-       PreparedStatement identificarStmt = c.prepareStatement("SELECT huehuella FROM participantes");
+       PreparedStatement identificarStmt = c.prepareStatement("SELECT CONCAT(pri_nombre,pri_apellido) as nombre,updated_at,huella_binaria FROM participantes");
        ResultSet rs = identificarStmt.executeQuery();
 
        //Si se encuentra el nombre en la base de datos
        while(rs.next()){
        //Lee la plantilla de la base de datos
-       byte templateBuffer[] = rs.getBytes("huehuella");
-       String nombre=rs.getString("huenombre");
+       byte templateBuffer[] = rs.getBytes("huella_binaria");
+       String nombre=rs.getString("nombre");
+       Date fecha=rs.getDate("update_at");
+       
+       sumarRestarDiasFecha(fecha,730);
        //Crea una nueva plantilla a partir de la guardada en la base de datos
        DPFPTemplate referenceTemplate = DPFPGlobal.getTemplateFactory().createTemplate(templateBuffer);
        //Envia la plantilla creada al objeto contendor de Template del componente de huella digital
@@ -211,7 +168,7 @@ public class VerificationForm extends CaptureForm
                                }
        }
        //Si no encuentra alguna huella correspondiente al nombre lo indica con un mensaje
-       JOptionPane.showMessageDialog(null, "No existe ningÃºn registro que coincida con la huella", "Verificacion de Huella", JOptionPane.ERROR_MESSAGE);
+       JOptionPane.showMessageDialog(null, "No existe ninguna registro que coincida con la huella", "Verificacion de Huella", JOptionPane.ERROR_MESSAGE);
        setTemplate(null);
        } catch (SQLException e) {
        //Si ocurre un error lo indica en la consola
@@ -246,28 +203,15 @@ public class VerificationForm extends CaptureForm
 
      
      
-     guardarStmt.setString(1, "por_registrar");
+     guardarStmt.setString(1, "verificado");
      guardarStmt.setInt(2, id);
      //Ejecuta la sentencia
      guardarStmt.execute();
      
-     ResultSet rs=guardarStmt.getGeneratedKeys();
-     int insert_id = 0;
-     if (rs.next()) {
-        insert_id = rs.getInt(1);
-     }
+    
      guardarStmt.close();
-     
-     
-     //consultar_http(Integer.toString(insert_id));
-     
-     
-     
-     
-     
-     
-     
-     JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
+   
+     //JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
      con.desconectar();
      //btnGuardar.setEnabled(false);
      //btnVerificar.grabFocus();
@@ -279,5 +223,20 @@ public class VerificationForm extends CaptureForm
      }
    }
     
+   public Date sumarRestarDiasFecha(Date fecha, int dias){	
+ 
+	
+      Calendar calendar = Calendar.getInstance();
+	
+      calendar.setTime(fecha); // Configuramos la fecha que se recibe
+	
+      calendar.add(Calendar.DAY_OF_YEAR, dias);  // numero de días a añadir, o restar en caso de días<0
+	
+ 	
+      return calendar.getTime(); // Devuelve el objeto Date con los nuevos días añadidos
+	
+ 
+	
+ }
     
 }

@@ -66,7 +66,7 @@ public class EnrollmentForm extends CaptureForm
 					stop();
 					updateStatus();
 					((MainForm)getOwner()).setTemplate(null);
-					JOptionPane.showMessageDialog(EnrollmentForm.this, "La muestra de la huella no esvalida,Intente de nuevo el registro de la huella", "Registro de huella", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(EnrollmentForm.this, "La muestra de la huella no es valida,Intente de nuevo el registro de la huella", "Registro de huella", JOptionPane.ERROR_MESSAGE);
 					start();
 					break;
 			}
@@ -106,16 +106,8 @@ public class EnrollmentForm extends CaptureForm
         insert_id = rs.getInt(1);
      }
      guardarStmt.close();
-     
-     
+          
      //consultar_http(Integer.toString(insert_id));
-     
-     
-     
-     
-     
-     
-     
      JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
      con.desconectar();
      //btnGuardar.setEnabled(false);
@@ -150,9 +142,7 @@ public class EnrollmentForm extends CaptureForm
                                 
                                 
                                 //aqui incoco el otro frame
-                              
-                                
-                                
+                               
                                 dispose();
                                 
                                 
