@@ -80,7 +80,7 @@ public class MainForm extends JFrame
 	}
 	
 	private void onEnroll() {
-		EnrollmentForm form = new EnrollmentForm(this);
+		Enrollment2Form form = new Enrollment2Form(this);
 		form.setVisible(true);
 	}
 
