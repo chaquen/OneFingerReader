@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Level;
@@ -48,6 +49,8 @@ public class VerificationForm extends CaptureForm
 		super.init();
 		this.setTitle("Verifica tu huella");
 		updateStatus(0);
+                
+                
 	}
 
 	
@@ -55,7 +58,18 @@ public class VerificationForm extends CaptureForm
             try {
                 super.process(sample);
                 
-               
+                Connection cc=con.conectar();
+                //Obtiene la plantilla correspondiente a la persona indicada
+                PreparedStatement verificarStmt2 = cc.prepareStatement("SELECT id FROM eventos WHERE estado_evento = 'activo' ");     
+                ResultSet rs2 = verificarStmt2.executeQuery();
+                int id_e=0;
+                while(rs2.next()){
+                    id_e= rs2.getInt("id");
+                    
+                }
+                
+                
+                
                 DPFPFeatureSet features = extractFeatures(sample, DPFPDataPurpose.DATA_PURPOSE_VERIFICATION);
 
                 Connection c=con.conectar();
@@ -64,13 +78,13 @@ public class VerificationForm extends CaptureForm
                 ResultSet rs = verificarStmt.executeQuery();
                 
                     int i=0;
-                    int id=0;
+                    int id_u=0;
                     
                 while(rs.next()){
                        byte templateBuffer[] = rs.getBytes("huella_binaria");
                        
                        String nombre=rs.getString("nombre");
-                       id=rs.getInt("id");
+                       id_u=rs.getInt("id");
                        Date fecha=rs.getDate("updated_at");//fecha de registro actualizacion de la huella
                        //Date hoy=
                        //Date fecha2=sumarRestarDiasFecha(fecha,730);//dos años despues 
@@ -92,7 +106,7 @@ public class VerificationForm extends CaptureForm
                         //e indica el nombre de la persona que coincidió.
                         if (result.isVerified()){
                         //crea la imagen de los datos guardado de las huellas guardadas en la base de datos
-                            actualizarHuella(id);
+                            actualizarHuella(id_u,id_e);
                             JOptionPane.showMessageDialog(null, "Bienvenido "+nombre,"Verificacion de Huella"+msnAdi, JOptionPane.INFORMATION_MESSAGE);
                             return;
                         }else{
@@ -101,6 +115,8 @@ public class VerificationForm extends CaptureForm
                         
                       
                 }
+                
+                //fin while
                     
                    
                 
@@ -186,7 +202,7 @@ public class VerificationForm extends CaptureForm
   
   
   
-   public void actualizarHuella(int id){
+   public void actualizarHuella(int id_u,int id_e){
      //Obtiene los datos del template de la huella actual
      
 
@@ -200,9 +216,33 @@ public class VerificationForm extends CaptureForm
      
      
      guardarStmt.setString(1, "verificado");
-     guardarStmt.setInt(2, id);
+     guardarStmt.setInt(2, id_u);
      //Ejecuta la sentencia
      guardarStmt.execute();
+     
+    
+     guardarStmt.close();
+   
+     //JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
+     con.desconectar();
+     
+     
+     
+     
+     
+     Connection cc=con.conectar(); //establece la conexion con la BD
+     PreparedStatement guardarStmt2 = cc.prepareStatement("INSERT INTO detalle_participantes (user_id , event_id ,created_at ,updated_at) VALUES(?,?,?,?)" );
+
+     
+    
+     
+     guardarStmt2.setInt(1,id_u);
+     guardarStmt2.setInt(2, id_e);
+     guardarStmt2.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()) );
+     guardarStmt2.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
+     
+     //Ejecuta la sentencia
+     guardarStmt2.execute();
      
     
      guardarStmt.close();
