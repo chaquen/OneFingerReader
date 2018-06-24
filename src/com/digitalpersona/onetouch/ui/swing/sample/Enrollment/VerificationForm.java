@@ -74,7 +74,7 @@ public class VerificationForm extends CaptureForm
 
                 Connection c=con.conectar();
                 //Obtiene la plantilla correspondiente a la persona indicada
-                PreparedStatement verificarStmt = c.prepareStatement("SELECT id,CONCAT(pri_nombre,' ',pri_apellido) as nombre,updated_at,huella_binaria FROM participantes");     
+                PreparedStatement verificarStmt = c.prepareStatement("SELECT documento,CONCAT(pri_nombre,' ',pri_apellido) as nombre,updated_at,huella_binaria FROM participantes");     
                 ResultSet rs = verificarStmt.executeQuery();
                 
                     int i=0;
@@ -84,7 +84,7 @@ public class VerificationForm extends CaptureForm
                        byte templateBuffer[] = rs.getBytes("huella_binaria");
                        
                        String nombre=rs.getString("nombre");
-                       id_u=rs.getInt("id");
+                       id_u=rs.getInt("documento");
                        Date fecha=rs.getDate("updated_at");//fecha de registro actualizacion de la huella
                        //Date hoy=
                        //Date fecha2=sumarRestarDiasFecha(fecha,730);//dos años despues 
@@ -106,8 +106,8 @@ public class VerificationForm extends CaptureForm
                         //e indica el nombre de la persona que coincidió.
                         if (result.isVerified()){
                         //crea la imagen de los datos guardado de las huellas guardadas en la base de datos
-                            actualizarHuella(id_u,id_e);
-                            JOptionPane.showMessageDialog(null, "Bienvenido "+nombre,"Verificacion de Huella"+msnAdi, JOptionPane.INFORMATION_MESSAGE);
+                            actualizarHuella(id_u,id_e,nombre);
+                            
                             return;
                         }else{
                             
@@ -148,7 +148,7 @@ public class VerificationForm extends CaptureForm
   
   
   
-   public void actualizarHuella(int id_u,int id_e){
+   public void actualizarHuella(int id_u,int id_e,String nombre){
      //Obtiene los datos del template de la huella actual
      
 
@@ -157,7 +157,7 @@ public class VerificationForm extends CaptureForm
      try {
      //Establece los valores para la sentencia SQL
      Connection c=con.conectar(); //establece la conexion con la BD
-     PreparedStatement guardarStmt = c.prepareStatement("UPDATE participantes SET estado_registro = ?, updated_at = ? WHERE id = ? ");
+     PreparedStatement guardarStmt = c.prepareStatement("UPDATE participantes SET estado_registro = ?, updated_at = ? WHERE documento = ? ");
 
      
      
@@ -174,29 +174,48 @@ public class VerificationForm extends CaptureForm
      //JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
      con.desconectar();
      
+     Connection c2=con.conectar();
+                //Obtiene la plantilla correspondiente a la persona indicada
+                PreparedStatement verificarStmt2 = c2.prepareStatement("SELECT id FROM detalle_participantes WHERE user_id = ? AND event_id = ?  ");     
+                verificarStmt2.setInt(1, id_u);
+                verificarStmt2.setInt(2, id_e);
+                ResultSet rs2 = verificarStmt2.executeQuery();
+                int id_ex=0;
+                while(rs2.next()){
+                    id_ex= rs2.getInt("id");
+                    
+                }
+                
+     con.desconectar();           
+                
      
-     
-     
-     
-     Connection cc=con.conectar(); //establece la conexion con la BD
-     PreparedStatement guardarStmt2 = cc.prepareStatement("INSERT INTO detalle_participantes (user_id , event_id ,created_at ,updated_at) VALUES(?,?,?,?)" );
+     if(id_ex==0){
+         Connection cc=con.conectar(); //establece la conexion con la BD
+        PreparedStatement guardarStmt2 = cc.prepareStatement("INSERT INTO detalle_participantes (user_id , event_id ,created_at ,updated_at) VALUES(?,?,?,?)" );
 
+
+
+
+        guardarStmt2.setInt(1,id_u);
+        guardarStmt2.setInt(2, id_e);
+        guardarStmt2.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()) );
+        guardarStmt2.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
+
+        //Ejecuta la sentencia
+        guardarStmt2.execute();
+
+
+        guardarStmt.close();
+
+        //JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
+        con.desconectar();
+        
+        JOptionPane.showMessageDialog(null, "Bienvenido "+nombre,"Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
+     }else{
+         JOptionPane.showMessageDialog(null, nombre+", ya te habias registrado a este evento","Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
+     }
      
-    
      
-     guardarStmt2.setInt(1,id_u);
-     guardarStmt2.setInt(2, id_e);
-     guardarStmt2.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()) );
-     guardarStmt2.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
-     
-     //Ejecuta la sentencia
-     guardarStmt2.execute();
-     
-    
-     guardarStmt.close();
-   
-     //JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
-     con.desconectar();
      //btnGuardar.setEnabled(false);
      //btnVerificar.grabFocus();
      } catch (SQLException ex) {
