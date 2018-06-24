@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -257,6 +258,16 @@ public class Enrollment2Form extends CaptureForm
      //consultar_http(Integer.toString(insert_id));
      JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
      con.desconectar();
+     
+     
+     
+      try {
+        Desktop desktop = java.awt.Desktop.getDesktop();
+        URI oURL = new URI("http://localhost/localbiometric/registro_participantes.html?id="+insert_id);
+        desktop.browse(oURL);
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }   
      //btnGuardar.setEnabled(false);
      //btnVerificar.grabFocus();
      } catch (SQLException ex) {

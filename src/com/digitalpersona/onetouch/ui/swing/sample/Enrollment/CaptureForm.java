@@ -8,6 +8,7 @@ import com.digitalpersona.onetouch.*;
 import com.digitalpersona.onetouch.capture.*;
 import com.digitalpersona.onetouch.capture.event.*;
 import com.digitalpersona.onetouch.processing.*;
+import java.net.URI;
 
 
 public class CaptureForm
@@ -51,7 +52,7 @@ public class CaptureForm
 		status.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		status.setFont(UIManager.getFont("Panel.font"));
 		
-		JButton quit = new JButton("Close");
+		JButton quit = new JButton("Salir ");
         quit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) { setVisible(false); }});
 
@@ -65,7 +66,7 @@ public class CaptureForm
 		center.add(right, BorderLayout.CENTER);
 		center.add(picture, BorderLayout.LINE_START);
 		center.add(status, BorderLayout.PAGE_END);
-			
+                            
 		JPanel bottom = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 		bottom.setBackground(Color.getColor("control"));
 		bottom.add(quit);
@@ -76,6 +77,8 @@ public class CaptureForm
 		
 		this.addComponentListener(new ComponentAdapter() {
 			@Override public void componentShown(ComponentEvent e) {
+                                
+
 				init();
 				start();
 			}
