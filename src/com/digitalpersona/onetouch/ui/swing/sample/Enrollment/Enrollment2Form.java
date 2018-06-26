@@ -52,7 +52,7 @@ public class Enrollment2Form extends CaptureForm
 	@Override protected void init()
 	{
 		super.init();
-		this.setTitle("Verifica tu huella");
+		this.setTitle("Registra tu huella");
 		
 	}
 
@@ -75,16 +75,6 @@ public class Enrollment2Form extends CaptureForm
                 while(rs.next()){
                        byte templateBuffer[] = rs.getBytes("huella_binaria");
                        
-                       String nombre=rs.getString("nombre");
-                       System.out.println(nombre);
-                       id=rs.getInt("id");
-                       Date fecha=rs.getDate("updated_at");//fecha de registro actualizacion de la huella
-                       //Date hoy=
-                       //Date fecha2=sumarRestarDiasFecha(fecha,730);//dos años despues 
-                       String msnAdi="";
-                       //if(hoy.after(fecha)){
-                         //  msnAdi=", Ya han pasado mas de dos años desde tu ultima vez, por favor actualiza tus datos";
-                       //}
                        
                         DPFPTemplate referenceTemplate = DPFPGlobal.getTemplateFactory().createTemplate(templateBuffer);
                         //Envia la plantilla creada al objeto contendor de Template del componente de huella digital
@@ -99,8 +89,8 @@ public class Enrollment2Form extends CaptureForm
                         //e indica el nombre de la persona que coincidió.
                         if (result.isVerified()){
                         //crea la imagen de los datos guardado de las huellas guardadas en la base de datos
-                            actualizarHuella(id);
-                            JOptionPane.showMessageDialog(null,"Esta huella ya esta registrada","Verificacion de Huella"+msnAdi, JOptionPane.INFORMATION_MESSAGE);
+                            //actualizarHuella(id);
+                            JOptionPane.showMessageDialog(null,"Esta huella ya esta registrada","Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
                             salir=false;
                             break;
                         }else{

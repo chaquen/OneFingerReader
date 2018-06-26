@@ -2,6 +2,7 @@ package com.digitalpersona.onetouch.ui.swing.sample.Enrollment;
 
 import com.digitalpersona.onetouch.*;
 import com.digitalpersona.onetouch.verification.*;
+import com.mysql.jdbc.exceptions.MySQLDataException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -83,12 +84,7 @@ public class VerificationForm extends CaptureForm
                 while(rs.next()){
                        byte templateBuffer[] = rs.getBytes("huella_binaria");
                        
-                       String nombre=rs.getString("nombre");
-                       id_u=rs.getInt("documento");
-                       Date fecha=rs.getDate("updated_at");//fecha de registro actualizacion de la huella
-                       //Date hoy=
-                       //Date fecha2=sumarRestarDiasFecha(fecha,730);//dos años despues 
-                       String msnAdi="";
+                       
                        //if(hoy.after(fecha)){
                          //  msnAdi=", Ya han pasado mas de dos años desde tu ultima vez, por favor actualiza tus datos";
                        //}
@@ -105,6 +101,12 @@ public class VerificationForm extends CaptureForm
                         //Si encuentra correspondencia dibuja el mapa
                         //e indica el nombre de la persona que coincidió.
                         if (result.isVerified()){
+                            String nombre=rs.getString("nombre");
+                            id_u=rs.getInt("documento");
+                            Date fecha=rs.getDate("updated_at");//fecha de registro actualizacion de la huella
+                            //Date hoy=
+                            //Date fecha2=sumarRestarDiasFecha(fecha,730);//dos años despues 
+                            String msnAdi="";
                         //crea la imagen de los datos guardado de las huellas guardadas en la base de datos
                             actualizarHuella(id_u,id_e,nombre);
                             
@@ -218,7 +220,10 @@ public class VerificationForm extends CaptureForm
      
      //btnGuardar.setEnabled(false);
      //btnVerificar.grabFocus();
-     } catch (SQLException ex) {
+     }catch(MySQLDataException exm){
+         System.err.println("Error al guardar dato los datos de la huella."+ exm.getMessage());
+     }
+     catch (SQLException ex) {
      //Si ocurre un error lo indica en la consola
      System.err.println("Error al guardar los datos de la huella."+ ex.getMessage());
      }finally{
