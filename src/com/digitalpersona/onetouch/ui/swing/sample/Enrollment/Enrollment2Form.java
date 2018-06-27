@@ -253,7 +253,7 @@ public class Enrollment2Form extends CaptureForm
      
       try {
         Desktop desktop = java.awt.Desktop.getDesktop();
-        URI oURL = new URI("http://localhost/localbiometric/registro_participantes.html?id="+insert_id);
+        URI oURL = new URI("http://localhost/FinalBiometrico/registroUsuario.html?id="+insert_id);
         desktop.browse(oURL);
       } catch (Exception ex) {
         ex.printStackTrace();
