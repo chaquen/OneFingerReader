@@ -51,8 +51,8 @@ public class MainForm extends JFrame
 				//verify.setEnabled(template != null);
 				//save.setEnabled(template != null);
 				if (evt.getNewValue() == evt.getOldValue()) return;
-				if (template != null)
-					JOptionPane.showMessageDialog(MainForm.this, "El lector esta listo para la captura de huellas", "Lector de huellas", JOptionPane.INFORMATION_MESSAGE);
+				//if (template != null)
+					//JOptionPane.showMessageDialog(MainForm.this, "El lector esta listo para la captura de huellas", "Lector de huellas", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 			
@@ -80,7 +80,7 @@ public class MainForm extends JFrame
 	}
 	
 	private void onEnroll() {
-		EnrollmentForm form = new EnrollmentForm(this);
+		Enrollment2Form form = new Enrollment2Form(this);
 		form.setVisible(true);
 	}
 

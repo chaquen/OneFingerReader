@@ -11,7 +11,7 @@ public class ConexionBD {
 
 public  String puerto="3306";
 public  String nomservidor="localhost";
-public  String db="db_ong";
+public  String db="db_ong_local";
 public  String user="root";
 public  String pass="";
 Connection conn=null;
