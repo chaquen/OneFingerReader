@@ -80,7 +80,7 @@ public class VerificationForm extends CaptureForm
                 
                     int i=0;
                     int id_u=0;
-                    
+                    Boolean no_existe=false;
                 while(rs.next()){
                        byte templateBuffer[] = rs.getBytes("huella_binaria");
                        
@@ -112,12 +112,14 @@ public class VerificationForm extends CaptureForm
                             
                             return;
                         }else{
-                            
+                            no_existe=true;
                         }
                         
                       
                 }
-                
+                if(no_existe){
+                    JOptionPane.showMessageDialog(null, "Esta usuario no aprece registrado, por favor registro un usuario nuevo","Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
+                }
                 //fin while
                     
                    
