@@ -118,7 +118,7 @@ public class VerificationForm extends CaptureForm
                       
                 }
                 if(no_existe){
-                    JOptionPane.showMessageDialog(null, "Esta usuario no aprece registrado, por favor registro un usuario nuevo","Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Este usuario no aparece registrado, por favor vaya a la opcion registrar huella","Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
                 }
                 //fin while
                     
