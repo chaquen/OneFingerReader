@@ -159,26 +159,28 @@ public class VerificationForm extends CaptureForm
     //Pregunta el nombre de la persona a la cual corresponde dicha huella
     
      try {
-     //Establece los valores para la sentencia SQL
-     Connection c=con.conectar(); //establece la conexion con la BD
-     PreparedStatement guardarStmt = c.prepareStatement("UPDATE participantes SET estado_registro = ?, updated_at = ? WHERE documento = ? ");
+            
+            if(id_e==0){
+                JOptionPane.showMessageDialog(null, "Bienvenido, "+nombre+" recuerda que para registarte debes seleccionar un evento","Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                Connection c=con.conectar(); //establece la conexion con la BD
+            PreparedStatement guardarStmt = c.prepareStatement("UPDATE participantes SET estado_registro = ?, updated_at = ? WHERE documento = ? ");
 
-     
-     
-     guardarStmt.setString(1, "verificado");
-     guardarStmt.setTimestamp(2, new java.sql.Timestamp(System.currentTimeMillis()));
-     guardarStmt.setInt(3, id_u);
-     
-     //Ejecuta la sentencia
-     guardarStmt.execute();
-     
-    
-     guardarStmt.close();
-   
-     //JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
-     con.desconectar();
-     
-     Connection c2=con.conectar();
+
+
+            guardarStmt.setString(1, "verificado");
+            guardarStmt.setTimestamp(2, new java.sql.Timestamp(System.currentTimeMillis()));
+            guardarStmt.setInt(3, id_u);
+
+            //Ejecuta la sentencia
+            guardarStmt.execute();
+
+
+            guardarStmt.close();
+
+            //JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
+            con.desconectar();
+                Connection c2=con.conectar();
                 //Obtiene la plantilla correspondiente a la persona indicada
                 PreparedStatement verificarStmt2 = c2.prepareStatement("SELECT id FROM detalle_participantes WHERE user_id = ? AND event_id = ?  ");     
                 verificarStmt2.setInt(1, id_u);
@@ -190,34 +192,40 @@ public class VerificationForm extends CaptureForm
                     
                 }
                 
-     con.desconectar();           
+                con.desconectar();
+                if(id_ex==0){
+                        Connection cc=con.conectar(); //establece la conexion con la BD
+                       PreparedStatement guardarStmt2 = cc.prepareStatement("INSERT INTO detalle_participantes (user_id , event_id ,created_at ,updated_at) VALUES(?,?,?,?)" );
+
+
+
+
+                       guardarStmt2.setInt(1,id_u);
+                       guardarStmt2.setInt(2, id_e);
+                       guardarStmt2.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()) );
+                       guardarStmt2.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
+
+                       //Ejecuta la sentencia
+                       guardarStmt2.execute();
+
+
+                       guardarStmt.close();
+
+                       //JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
+                       con.desconectar();
+
+                       JOptionPane.showMessageDialog(null, "Bienvenido "+nombre,"Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
+                }else{
+                        JOptionPane.showMessageDialog(null, nombre+", ya te habias registrado a este evento","Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+            //Establece los valores para la sentencia SQL
+    
+     
+                           
                 
      
-     if(id_ex==0){
-         Connection cc=con.conectar(); //establece la conexion con la BD
-        PreparedStatement guardarStmt2 = cc.prepareStatement("INSERT INTO detalle_participantes (user_id , event_id ,created_at ,updated_at) VALUES(?,?,?,?)" );
-
-
-
-
-        guardarStmt2.setInt(1,id_u);
-        guardarStmt2.setInt(2, id_e);
-        guardarStmt2.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()) );
-        guardarStmt2.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
-
-        //Ejecuta la sentencia
-        guardarStmt2.execute();
-
-
-        guardarStmt.close();
-
-        //JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
-        con.desconectar();
-        
-        JOptionPane.showMessageDialog(null, "Bienvenido "+nombre,"Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
-     }else{
-         JOptionPane.showMessageDialog(null, nombre+", ya te habias registrado a este evento","Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
-     }
+     
      
      
      //btnGuardar.setEnabled(false);
