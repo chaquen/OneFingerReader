@@ -103,11 +103,9 @@ public class VerificationForm extends CaptureForm
                         if (result.isVerified()){
                             String nombre=rs.getString("nombre");
                             id_u=rs.getInt("documento");
-                            Date fecha=rs.getDate("updated_at");//fecha de registro actualizacion de la huella
-                            //Date hoy=
-                            //Date fecha2=sumarRestarDiasFecha(fecha,730);//dos años despues 
+                           
                             String msnAdi="";
-                        //crea la imagen de los datos guardado de las huellas guardadas en la base de datos
+                            //crea la imagen de los datos guardado de las huellas guardadas en la base de datos
                             actualizarHuella(id_u,id_e,nombre);
                             
                             return;
@@ -164,13 +162,13 @@ public class VerificationForm extends CaptureForm
                 JOptionPane.showMessageDialog(null, "Bienvenido, "+nombre+" recuerda que para registarte debes seleccionar un evento","Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
             }else{
                 Connection c=con.conectar(); //establece la conexion con la BD
-            PreparedStatement guardarStmt = c.prepareStatement("UPDATE participantes SET estado_registro = ?, updated_at = ? WHERE documento = ? ");
+            PreparedStatement guardarStmt = c.prepareStatement("UPDATE participantes SET estado_registro = ? WHERE documento = ? ");
 
 
 
             guardarStmt.setString(1, "verificado");
-            guardarStmt.setTimestamp(2, new java.sql.Timestamp(System.currentTimeMillis()));
-            guardarStmt.setInt(3, id_u);
+            //guardarStmt.setTimestamp(2, new java.sql.Timestamp(System.currentTimeMillis()));
+            guardarStmt.setInt(2, id_u);
 
             //Ejecuta la sentencia
             guardarStmt.execute();
