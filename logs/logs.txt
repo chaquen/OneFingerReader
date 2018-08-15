@@ -1,0 +1,6 @@
+ -2018-08-15 09:39:45- {Error al guardar los datos de la huella.}- 
+ -2018-08-15 09:39:58- {Error al guardar los datos de la huella.}- 
+ -2018-08-15 09:47:14- {Error al guardar los datos de la huella.}- 
+ -2018-08-15 10:09:54- {SqlException:Unknown column 'estado_registro' in 'field list'}- 
+ -2018-08-15 10:16:01- {SqlException:Unknown column 'estado_registro' in 'field list'}- 
+ -2018-08-15 10:19:00- {SqlException:Unknown column 'estado_registro' in 'field list'}- 
