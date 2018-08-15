@@ -9,7 +9,7 @@ import java.util.Date;
 
 public class FileManager  
 {
-	String dir_archivo="logs/logs.txt";
+	String dir_archivo="C:\\xampp\\htdocs\\OneFingerReader\\logs\\logs.txt";
 	
 	public FileManager(){
 		
