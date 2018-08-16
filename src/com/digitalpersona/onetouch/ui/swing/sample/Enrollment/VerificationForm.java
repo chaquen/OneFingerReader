@@ -58,7 +58,7 @@ public class VerificationForm extends CaptureForm
                 ResultSet rs = verificarStmt.executeQuery();
                 
                     int i=0;
-                    Long id_u=0;
+                    long id_u=0;
                     Boolean no_existe=false;
                 while(rs.next()){
                         byte templateBuffer[] = rs.getBytes("huella_binaria");
@@ -118,7 +118,7 @@ public class VerificationForm extends CaptureForm
 	this.template = template;
 	firePropertyChange(TEMPLATE_PROPERTY, old, template);
   }  
-  public void actualizarHuella(Long id_u,int id_e,String nombre) throws IOException{
+  public void actualizarHuella(long id_u,int id_e,String nombre) throws IOException{
      //Obtiene los datos del template de la huella actual
     //Pregunta el nombre de la persona a la cual corresponde dicha huella
      try {
