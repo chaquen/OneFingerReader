@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import com.digitalpersona.onetouch.*;
+import java.net.URI;
 
 public class MainForm extends JFrame
 {
@@ -21,6 +22,7 @@ public class MainForm extends JFrame
 		}
 	}
 	MainForm() {
+            
         setState(Frame.NORMAL);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.setTitle("Verifica tu huella");
@@ -74,9 +76,16 @@ public class MainForm extends JFrame
 		
 		pack();
 		setSize((int)(getSize().width*1.6), getSize().height);
-        setLocationRelativeTo(null);
+                setLocationRelativeTo(null);
 		setTemplate(null);
 		setVisible(true);
+                  try {
+                    Desktop desktop = java.awt.Desktop.getDesktop();
+                    URI oURL = new URI("http://localhost/Biometrico/");
+                    desktop.browse(oURL);
+                  } catch (Exception ex) {
+                    ex.printStackTrace();
+                  }   
 	}
 	
 	private void onEnroll() {

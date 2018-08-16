@@ -5,23 +5,16 @@ import com.digitalpersona.onetouch.processing.DPFPEnrollment;
 import com.digitalpersona.onetouch.processing.DPFPImageQualityException;
 import com.digitalpersona.onetouch.verification.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import java.util.Calendar;
 
 public class Enrollment2Form extends CaptureForm 
 {
@@ -44,8 +37,7 @@ public class Enrollment2Form extends CaptureForm
          
 	Enrollment2Form(Frame owner) {
             
-		super(owner);
-          
+		super(owner);          
                     
         }
     
@@ -60,8 +52,6 @@ public class Enrollment2Form extends CaptureForm
         @Override protected void process(DPFPSample sample) {
             try {
                 super.process(sample);
-                
-               
                 DPFPFeatureSet features = extractFeatures(sample, DPFPDataPurpose.DATA_PURPOSE_VERIFICATION);
 
                 Connection c=con.conectar();
@@ -69,8 +59,8 @@ public class Enrollment2Form extends CaptureForm
                 PreparedStatement verificarStmt = c.prepareStatement("SELECT id,CONCAT(pri_nombre,' ',pri_apellido) as nombre,updated_at,huella_binaria FROM participantes");     
                 ResultSet rs = verificarStmt.executeQuery();
                 
-                    int i=0;
-                    int id=0;
+                int i=0;
+                int id=0;
                 Boolean salir=true;    
                 while(rs.next()){
                        byte templateBuffer[] = rs.getBytes("huella_binaria");
@@ -93,11 +83,8 @@ public class Enrollment2Form extends CaptureForm
                             JOptionPane.showMessageDialog(null,"Esta huella ya esta registrada","Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
                             salir=false;
                             break;
-                        }else{
-                            
                         }
                         
-                      
                 }
                     
                 if(salir){
@@ -111,7 +98,10 @@ public class Enrollment2Form extends CaptureForm
                             makeReport("Las caracteristicas de la huella han sido creadas");
                             enroller.addFeatures(features2);		// Add feature set to template.
                     }
-                    catch (DPFPImageQualityException ex) { }
+                    catch (DPFPImageQualityException ex) { 
+                        FileManager fl= new FileManager();
+                        fl.Escribir("DPFPImageQualityException: "+ ex.getMessage());
+                    }
                     finally {
                             updateStatus();
 
@@ -143,6 +133,9 @@ public class Enrollment2Form extends CaptureForm
                 // Process the sample and create a feature set for the enrollment purpose.
             } catch (SQLException ex) {
                 Logger.getLogger(Enrollment2Form.class.getName()).log(Level.SEVERE, null, ex);
+                FileManager fl= new FileManager();
+                fl.Escribir("SqlException: "+ex.getMessage());
+                JOptionPane.showMessageDialog(null,"Se ha generado un error por favor intenta el registro de nuevo, si la falla persiste comunicate con el administrador de el sistema","Registro de Huella", JOptionPane.INFORMATION_MESSAGE);
             }
 		
 	}
@@ -165,59 +158,7 @@ public class Enrollment2Form extends CaptureForm
 	firePropertyChange(TEMPLATE_PROPERTY, old, template);
   }
   
-  
-  
-   public void actualizarHuella(int id){
-     //Obtiene los datos del template de la huella actual
-     
-
-    //Pregunta el nombre de la persona a la cual corresponde dicha huella
-    
-     try {
-     //Establece los valores para la sentencia SQL
-     Connection c=con.conectar(); //establece la conexion con la BD
-     PreparedStatement guardarStmt = c.prepareStatement("UPDATE participantes SET estado_registro = ? WHERE id = ? ");
-
-     
-     
-     guardarStmt.setString(1, "verificado");
-     guardarStmt.setInt(2, id);
-     //Ejecuta la sentencia
-     guardarStmt.execute();
-     
-    
-     guardarStmt.close();
-   
-     //JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
-     con.desconectar();
-     //btnGuardar.setEnabled(false);
-     //btnVerificar.grabFocus();
-     } catch (SQLException ex) {
-     //Si ocurre un error lo indica en la consola
-     System.err.println("Error al guardar los datos de la huella."+ ex.getMessage());
-     }finally{
-     con.desconectar();
-     }
-   }
-    
-   public Date sumarRestarDiasFecha(Date fecha, int dias){	
- 
-	
-      Calendar calendar = Calendar.getInstance();
-	
-      calendar.setTime(fecha); // Configuramos la fecha que se recibe
-	
-      calendar.add(Calendar.DAY_OF_YEAR, dias);  // numero de días a añadir, o restar en caso de días<0
-	
- 	
-      return calendar.getTime(); // Devuelve el objeto Date con los nuevos días añadidos
-	
- 
-	
- }
-   
-   
- /*
+   /*
   * Guarda los datos de la huella digital actual en la base de datos
   */
     public void guardarHuella(DPFPTemplate template){
@@ -248,23 +189,26 @@ public class Enrollment2Form extends CaptureForm
      //consultar_http(Integer.toString(insert_id));
      JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
      con.desconectar();
-     
-     
-     
-      try {
+     try {
         Desktop desktop = java.awt.Desktop.getDesktop();
-        URI oURL = new URI("http://localhost/FinalBiometrico/registroUsuario.html?id="+insert_id);
+        URI oURL = new URI("http://localhost/Biometrico/registroUsuario.html?id="+insert_id);
         desktop.browse(oURL);
-      } catch (Exception ex) {
-        ex.printStackTrace();
-      }   
+     } catch (Exception ex) {
+          ex.printStackTrace();
+          FileManager fl= new FileManager();
+          fl.Escribir("Exception "+ ex.getMessage());
+          JOptionPane.showMessageDialog(null,"Se ha generado un error por favor intenta el registro de nuevo, si la falla persiste comunicate con el administrador de el sistema","Registro de Huella", JOptionPane.INFORMATION_MESSAGE);
+     }   
      //btnGuardar.setEnabled(false);
      //btnVerificar.grabFocus();
      } catch (SQLException ex) {
      //Si ocurre un error lo indica en la consola
-     System.err.println("Error al guardar los datos de la huella."+ ex.getMessage());
+                System.err.println("Error al guardar los datos de la huella."+ ex.getMessage());
+                FileManager fl= new FileManager();
+                fl.Escribir("SqlException:"+ ex.getMessage());
+                JOptionPane.showMessageDialog(null,"Se ha generado un error por favor intenta el registro de nuevo, si la falla persiste comunicate con el administrador de el sistema","Registro de Huella", JOptionPane.INFORMATION_MESSAGE);
      }finally{
-     con.desconectar();
+        con.desconectar();
      }
    }  
     
