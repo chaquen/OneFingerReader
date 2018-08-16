@@ -58,16 +58,10 @@ public class VerificationForm extends CaptureForm
                 ResultSet rs = verificarStmt.executeQuery();
                 
                     int i=0;
-                    int id_u=0;
+                    Long id_u=0;
                     Boolean no_existe=false;
                 while(rs.next()){
-                       byte templateBuffer[] = rs.getBytes("huella_binaria");
-                       
-                       
-                       //if(hoy.after(fecha)){
-                         //  msnAdi=", Ya han pasado mas de dos años desde tu ultima vez, por favor actualiza tus datos";
-                       //}
-                       
+                        byte templateBuffer[] = rs.getBytes("huella_binaria");
                         DPFPTemplate referenceTemplate = DPFPGlobal.getTemplateFactory().createTemplate(templateBuffer);
                         //Envia la plantilla creada al objeto contendor de Template del componente de huella digital
                         setTemplate(referenceTemplate);
@@ -81,7 +75,7 @@ public class VerificationForm extends CaptureForm
                         //e indica el nombre de la persona que coincidió.
                         if (result.isVerified()){
                             String nombre=rs.getString("nombre");
-                            id_u=rs.getInt("documento");                           
+                            id_u=rs.getLong("documento");                           
                             String msnAdi="";
                             //crea la imagen de los datos guardado de las huellas guardadas en la base de datos
                             actualizarHuella(id_u,id_e,nombre);
@@ -124,7 +118,7 @@ public class VerificationForm extends CaptureForm
 	this.template = template;
 	firePropertyChange(TEMPLATE_PROPERTY, old, template);
   }  
-  public void actualizarHuella(int id_u,int id_e,String nombre) throws IOException{
+  public void actualizarHuella(Long id_u,int id_e,String nombre) throws IOException{
      //Obtiene los datos del template de la huella actual
     //Pregunta el nombre de la persona a la cual corresponde dicha huella
      try {
@@ -137,7 +131,7 @@ public class VerificationForm extends CaptureForm
                 PreparedStatement guardarStmt = c.prepareStatement("UPDATE participantes SET estado_registro = ? WHERE documento = ? ");
                 guardarStmt.setString(1, "verificado");
                 //guardarStmt.setTimestamp(2, new java.sql.Timestamp(System.currentTimeMillis()));
-                guardarStmt.setInt(2, id_u);
+                guardarStmt.setLong(2, id_u);
                 //Ejecuta la sentencia
                 guardarStmt.execute();
                 guardarStmt.close();
@@ -146,7 +140,7 @@ public class VerificationForm extends CaptureForm
                 Connection c2=con.conectar();
                 //Obtiene la plantilla correspondiente a la persona indicada
                 PreparedStatement verificarStmt2 = c2.prepareStatement("SELECT id FROM detalle_participantes WHERE user_id = ? AND event_id = ?  ");     
-                verificarStmt2.setInt(1, id_u);
+                verificarStmt2.setLong(1, id_u);
                 verificarStmt2.setInt(2, id_e);
                 ResultSet rs2 = verificarStmt2.executeQuery();
                 int id_ex=0;
@@ -158,7 +152,7 @@ public class VerificationForm extends CaptureForm
                 if(id_ex==0){
                         Connection cc=con.conectar(); //establece la conexion con la BD
                         PreparedStatement guardarStmt2 = cc.prepareStatement("INSERT INTO detalle_participantes (user_id , event_id ,created_at ,updated_at) VALUES(?,?,?,?)" );
-                        guardarStmt2.setInt(1,id_u);
+                        guardarStmt2.setLong(1,id_u);
                         guardarStmt2.setInt(2, id_e);
                         guardarStmt2.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()) );
                         guardarStmt2.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
