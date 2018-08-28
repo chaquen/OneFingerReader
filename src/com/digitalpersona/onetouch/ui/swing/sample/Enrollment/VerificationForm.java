@@ -24,9 +24,12 @@ public class VerificationForm extends CaptureForm
         public DPFPFeatureSet featuresverificacion;
         
         public static String TEMPLATE_PROPERTY = "template";
+        Frame mi_frame;
         
 	VerificationForm(Frame owner) {
+         
           super(owner);
+          
         }
     
 	@Override protected void init()
@@ -34,6 +37,7 @@ public class VerificationForm extends CaptureForm
 		super.init();
 		this.setTitle("Verifica tu huella");
 		updateStatus(0);
+                this.mi_frame=(Frame)super.getOwner();
         }
 
 	
@@ -76,7 +80,7 @@ public class VerificationForm extends CaptureForm
                         if (result.isVerified()){
                             String nombre=rs.getString("nombre");
                             id_u=rs.getLong("documento");                           
-                            String msnAdi="";
+                            
                             //crea la imagen de los datos guardado de las huellas guardadas en la base de datos
                             actualizarHuella(id_u,id_e,nombre);
                             
@@ -150,20 +154,14 @@ public class VerificationForm extends CaptureForm
                 }                
                 con.desconectar();
                 if(id_ex==0){
-                        Connection cc=con.conectar(); //establece la conexion con la BD
-                        PreparedStatement guardarStmt2 = cc.prepareStatement("INSERT INTO detalle_participantes (user_id , event_id ,created_at ,updated_at) VALUES(?,?,?,?)" );
-                        guardarStmt2.setLong(1,id_u);
-                        guardarStmt2.setInt(2, id_e);
-                        guardarStmt2.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()) );
-                        guardarStmt2.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
-                        //Ejecuta la sentencia
-                        guardarStmt2.execute();
-                        guardarStmt.close();
-                        //JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
-                        con.desconectar();
-                        JOptionPane.showMessageDialog(null, "Bienvenido "+nombre,"Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
+                       
+                        
+                        validaTerminos(id_u,id_e,nombre);                     
+                        
                 }else{
                         JOptionPane.showMessageDialog(null, nombre+", ya te habias registrado a este evento","Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
+                        //temporal solo para probar 
+                                         
                 }
             }     
      }catch(MySQLDataException exm){
@@ -181,5 +179,10 @@ public class VerificationForm extends CaptureForm
      }finally{
         con.desconectar();
      }
+   }
+   private void validaTerminos(long user,int event,String nombre) {
+		ValidarTerminos form = new ValidarTerminos(this.mi_frame,user,event,nombre);
+                form.setVisible(true);
+                
    }
 }

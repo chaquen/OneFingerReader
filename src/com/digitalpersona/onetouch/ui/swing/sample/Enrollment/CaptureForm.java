@@ -8,7 +8,7 @@ import com.digitalpersona.onetouch.*;
 import com.digitalpersona.onetouch.capture.*;
 import com.digitalpersona.onetouch.capture.event.*;
 import com.digitalpersona.onetouch.processing.*;
-import java.net.URI;
+
 
 
 public class CaptureForm
@@ -53,7 +53,7 @@ public class CaptureForm
 		status.setFont(UIManager.getFont("Panel.font"));
 		
 		JButton quit = new JButton("Salir ");
-        quit.addActionListener(new ActionListener() {
+                quit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) { setVisible(false); }});
 
 		JPanel right = new JPanel(new BorderLayout());

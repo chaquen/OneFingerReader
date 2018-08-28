@@ -98,54 +98,6 @@ public class MainForm extends JFrame
 		form.setVisible(true);
 	}
 
-	private void onSave() {
-		JFileChooser chooser = new JFileChooser();
-		chooser.addChoosableFileFilter(new TemplateFileFilter());
-		while (true) {
-			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-				try {
-					File file = chooser.getSelectedFile();
-					if (!file.toString().toLowerCase().endsWith(".fpt"))
-						file = new File(file.toString() + ".fpt");
-					if (file.exists()) {
-						int choice = JOptionPane.showConfirmDialog(this,
-							String.format("File \"%1$s\" already exists.\nDo you want to replace it?", file.toString()),
-							"Fingerprint saving", 
-							JOptionPane.YES_NO_CANCEL_OPTION);
-						if (choice == JOptionPane.NO_OPTION)
-							continue;
-						else if (choice == JOptionPane.CANCEL_OPTION)
-							break;
-					}
-					FileOutputStream stream = new FileOutputStream(file);
-					stream.write(getTemplate().serialize());
-					stream.close();
-				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Fingerprint saving", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-			break;
-		}
-	}
-
-	private void onLoad() {
-		JFileChooser chooser = new JFileChooser();
-		chooser.addChoosableFileFilter(new TemplateFileFilter());
-		if(chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-			try {
-				FileInputStream stream = new FileInputStream(chooser.getSelectedFile());
-				byte[] data = new byte[stream.available()];
-				stream.read(data);
-				stream.close();
-				DPFPTemplate t = DPFPGlobal.getTemplateFactory().createTemplate();
-				t.deserialize(data);
-				setTemplate(t);
-			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Cargando lector de huella", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
-	
 	public DPFPTemplate getTemplate() {
 		return template;
 	}
