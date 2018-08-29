@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -44,8 +45,8 @@ public class ValidarTerminos
     long _id_user;
     int _acepto;
     JLabel texto = new JLabel();
-    JRadioButton option1 = new JRadioButton("Si, Acepto");
-    JRadioButton option2 = new JRadioButton("No, Acepto");
+    JCheckBox option1 = new JCheckBox("Si, Acepto uso de datos");
+    JCheckBox option2 = new JCheckBox("Si, Acepto uso de foto");
 	
     public ValidarTerminos(Frame owner,long id_user,int id_event,String nombre) {
         super (owner, true);
@@ -53,10 +54,7 @@ public class ValidarTerminos
 
 		setLayout(new BorderLayout());
 		rootPane.setBorder(BorderFactory.createEmptyBorder(80, 80, 80, 80));
-                ButtonGroup group = new ButtonGroup();
-                group.add(option1);
-                group.add(option2);
-                option1.setSelected(true);
+                
                 
                 JPanel right = new JPanel(new BorderLayout());
                 right.setPreferredSize(new Dimension(80, 80));
@@ -76,14 +74,20 @@ public class ValidarTerminos
                 
                 aceptar.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) { 
-                        String valor="";
-                        if(group.getSelection().equals(option1.getModel())) {
-                            valor="SI";
-                        }else if(group.getSelection().equals(option2.getModel())){
-                            valor="NO";
+                        String valor_datos="";
+                        String valor_foto="";
+                        if(option1.isSelected()) {
+                            valor_datos="SI";
+                        }else{
+                            valor_datos="NO";
                         }
-                        if(valor!=""){
-                            registrar_en_evento(_id_user,_id_event,valor);
+                        if(option2.isSelected()){
+                            valor_foto="SI";
+                        }else{
+                            valor_foto="NO";
+                        }
+                        if(valor_foto!="" ){
+                            registrar_en_evento(_id_user,_id_event,valor_datos,valor_foto);
 
                             setVisible(false);     
                         }else{
@@ -148,16 +152,17 @@ public class ValidarTerminos
     
       
     //funcion para registrar el asistente
-    public void registrar_en_evento(long id_u,int id_e,String acepta){
+    public void registrar_en_evento(long id_u,int id_e,String acepta_datos,String acepta_foto){
         Connection cc=con.conectar(); //establece la conexion con la BD
         PreparedStatement guardarStmt2;
         try {
-            guardarStmt2 = cc.prepareStatement("INSERT INTO detalle_participantes (user_id , event_id, acepta_terminos ,created_at ,updated_at) VALUES(?,?,?,?,?)" );
+            guardarStmt2 = cc.prepareStatement("INSERT INTO detalle_participantes (user_id , event_id, acepta_terminos, acepta_terminos_foto,created_at ,updated_at) VALUES(?,?,?,?,?,?)" );
             guardarStmt2.setLong(1,id_u);
             guardarStmt2.setInt(2, id_e);
-            guardarStmt2.setString(3, acepta);
-            guardarStmt2.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()) );
-            guardarStmt2.setTimestamp(5, new java.sql.Timestamp(System.currentTimeMillis()));
+            guardarStmt2.setString(3, acepta_datos);
+            guardarStmt2.setString(4, acepta_foto);
+            guardarStmt2.setTimestamp(5, new java.sql.Timestamp(System.currentTimeMillis()) );
+            guardarStmt2.setTimestamp(6, new java.sql.Timestamp(System.currentTimeMillis()));
             //Ejecuta la sentencia
             guardarStmt2.execute();
             guardarStmt2.close();
