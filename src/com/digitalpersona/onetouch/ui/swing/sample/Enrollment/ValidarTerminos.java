@@ -46,7 +46,7 @@ public class ValidarTerminos
     int _acepto;
     JLabel texto = new JLabel();
     JCheckBox option1 = new JCheckBox("Si, Acepto uso de datos");
-    JCheckBox option2 = new JCheckBox("Si, Acepto uso de foto");
+    JCheckBox option2 = new JCheckBox("Si, Acepto uso de la imagen");
 	
     public ValidarTerminos(Frame owner,long id_user,int id_event,String nombre) {
         super (owner, true);
