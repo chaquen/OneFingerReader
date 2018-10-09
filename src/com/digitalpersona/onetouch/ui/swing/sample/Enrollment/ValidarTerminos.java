@@ -15,6 +15,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -156,18 +157,41 @@ public class ValidarTerminos
         Connection cc=con.conectar(); //establece la conexion con la BD
         PreparedStatement guardarStmt2;
         try {
-            guardarStmt2 = cc.prepareStatement("INSERT INTO detalle_participantes (user_id , event_id, acepta_terminos, acepta_terminos_foto,created_at ,updated_at) VALUES(?,?,?,?,?,?)" );
-            guardarStmt2.setLong(1,id_u);
-            guardarStmt2.setInt(2, id_e);
-            guardarStmt2.setString(3, acepta_datos);
-            guardarStmt2.setString(4, acepta_foto);
-            guardarStmt2.setTimestamp(5, new java.sql.Timestamp(System.currentTimeMillis()) );
-            guardarStmt2.setTimestamp(6, new java.sql.Timestamp(System.currentTimeMillis()));
-            //Ejecuta la sentencia
-            guardarStmt2.execute();
-            guardarStmt2.close();
-            //JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
-            con.desconectar();
+            
+                Connection c=con.conectar();
+                //Obtiene la plantilla correspondiente a la persona indicada
+                PreparedStatement verificarStmt = c.prepareStatement("SELECT id FROM detalle_participantes WHERE user_id = ? AND event_id = ? ");     
+                verificarStmt.setLong(1, id_u);
+                verificarStmt.setInt(2, id_e);
+                ResultSet rs = verificarStmt.executeQuery();
+                Boolean no_existe=false;
+                
+                while(rs.next()){
+                      no_existe=true;
+                                
+                }
+                if(no_existe){
+                    con.desconectar();      
+                    JOptionPane.showMessageDialog(null, "Este usuario ya aparece registrado en este evento","Verificación de Huella", JOptionPane.INFORMATION_MESSAGE);
+                }else{
+                    guardarStmt2 = cc.prepareStatement("INSERT INTO detalle_participantes (user_id , event_id, acepta_terminos, acepta_terminos_foto,created_at ,updated_at) VALUES(?,?,?,?,?,?)" );
+                    guardarStmt2.setLong(1,id_u);
+                    guardarStmt2.setInt(2, id_e);
+                    guardarStmt2.setString(3, acepta_datos);
+                    guardarStmt2.setString(4, acepta_foto);
+                    guardarStmt2.setTimestamp(5, new java.sql.Timestamp(System.currentTimeMillis()) );
+                    guardarStmt2.setTimestamp(6, new java.sql.Timestamp(System.currentTimeMillis()));
+                    //Ejecuta la sentencia
+                    guardarStmt2.execute();
+                    guardarStmt2.close();
+                    //JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
+                    con.desconectar();      
+                
+                }
+                
+                
+            /*validar que no se hubiese registardo*/
+            
         } catch (SQLException ex) {
             Logger.getLogger(ValidarTerminos.class.getName()).log(Level.SEVERE, null, ex);
             FileManager fl= new FileManager();
